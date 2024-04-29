@@ -19,3 +19,6 @@ class UserReadDTO(UserBaseDTO):
     domain: Domain
     locktime: datetime.datetime | None
 
+
+# class AcquireLockRequest:
+#     id: UUID

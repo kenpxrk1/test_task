@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from api.services.user import UserService
 from .depends import get_user_service
@@ -29,4 +30,16 @@ async def get_users(
     return users
 
 
-
+@router.patch("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserReadDTO)
+async def acquire_lock(
+    user_id: UUID,
+    service: UserService = Depends(get_user_service)
+) -> UserReadDTO | None:
+    user = await service.acquire_lock(user_id)
+    if user == None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id: {user_id} does not exist :("
+        )
+    return user
+    

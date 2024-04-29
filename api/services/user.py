@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 from api.repositories.user import UserRepository
 from api.schemas import UserReadDTO, UserСreateDTO
 from passlib.context import CryptContext
@@ -28,6 +29,13 @@ class UserService:
         list of UserReadDTO objects. 
         """
         users = await self.repository.get_users()
-        return users 
+        return users
+    
+
+    async def acquire_lock(self, id: UUID) -> UserReadDTO | None:
+        user = await self.repository.set_locktime(id)
+        if user == None:
+            return None
+        return user
     
 

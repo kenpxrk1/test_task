@@ -1,11 +1,13 @@
+import datetime
 from typing import List
+from uuid import UUID
 from fastapi import Depends
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, text, update
 from api.models import UserModel
 from api.db import async_session
 from .repository import AbstractRepository
 from api.schemas import UserСreateDTO, UserReadDTO
-from sqlalchemy.ext.asyncio import AsyncSession
+
 
 
 class UserRepository(AbstractRepository):
@@ -50,8 +52,16 @@ class UserRepository(AbstractRepository):
             ]
 
     @classmethod
-    async def acquire_lock(cls):
-        ...
+    async def set_locktime(cls, id: UUID):
+        async with async_session() as session:
+            user = await session.get(UserModel, id)
+            if user == None:
+                return None
+            user.locktime = datetime.datetime.now()
+            await session.commit()
+            return UserReadDTO.model_validate(user, from_attributes=True)
+
+
 
     @classmethod
     async def release_lock(cls):

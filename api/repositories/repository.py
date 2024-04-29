@@ -12,7 +12,7 @@ class AbstractRepository(ABC):
         raise NotImplementedError
     
     @abstractmethod
-    async def acquire_lock(cls):
+    async def set_locktime(cls):
         raise NotImplementedError
     
     @abstractmethod
