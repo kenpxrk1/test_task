@@ -52,7 +52,12 @@ class UserRepository(AbstractRepository):
             ]
 
     @classmethod
-    async def set_locktime(cls, id: UUID):
+    async def set_locktime(cls, id: UUID) -> UserReadDTO | None:
+        """
+        set_locktime takes id param and setting locktime 
+        for user by his id. Returns UserReadDTO object 
+        or None if user does not exist.
+        """
         async with async_session() as session:
             user = await session.get(UserModel, id)
             if user == None:

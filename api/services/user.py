@@ -26,13 +26,17 @@ class UserService:
     async def get_users(self) -> List[UserReadDTO | None]:
         """
         calling a self repository get_users method and returns 
-        list of UserReadDTO objects. 
+        list of UserReadDTO objects or None. 
         """
         users = await self.repository.get_users()
         return users
     
 
     async def acquire_lock(self, id: UUID) -> UserReadDTO | None:
+        """ 
+        calling a self repository acquire method and returns 
+        UserReadDTO object or None.
+        """
         user = await self.repository.set_locktime(id)
         if user == None:
             return None

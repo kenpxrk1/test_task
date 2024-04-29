@@ -12,7 +12,11 @@ router = APIRouter(prefix="/users", tags=["users"])
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_user(
     request: UserСreateDTO, service: UserService = Depends(get_user_service)
-):
+) -> None:
+    """ 
+    creates a new user and returns success message if it 
+    done correctly 
+    """
     try:
         await service.create_user(request)
         return "user created successfully"
@@ -26,6 +30,9 @@ async def create_user(
 async def get_users(
     service: UserService = Depends(get_user_service)
 ) -> List[UserReadDTO | None]:
+    
+    """ get method that returns a list of all users or empty list if they dont exist """
+
     users = await service.get_users()
     return users
 
@@ -35,6 +42,11 @@ async def acquire_lock(
     user_id: UUID,
     service: UserService = Depends(get_user_service)
 ) -> UserReadDTO | None:
+    
+    """ patch method that updates locktime status
+        and returns UserReadDTO object or None 
+    """
+
     user = await service.acquire_lock(user_id)
     if user == None:
         raise HTTPException(
