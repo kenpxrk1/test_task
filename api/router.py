@@ -40,28 +40,48 @@ async def get_users(
     return users
 
 
-@router.patch("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserReadDTO)
+@router.patch("/acquire_lock/{user_id}", status_code=status.HTTP_200_OK, response_model=UserReadDTO)
 async def acquire_lock(
     user_id: UUID,
     service: UserService = Depends(get_user_service)
-) -> UserReadDTO | None:
+) -> UserReadDTO:
     
     """ patch method that updates locktime status
-        and returns UserReadDTO object or None 
+        and returns UserReadDTO object
     """
     try:
         user = await service.acquire_lock(user_id)
-        
+
+    except TypeError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id: {user_id} does not exist :("
+        )
+
     except UserAlreadyLockedError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"User with id: {user_id} already locked :("
         )
-        
-    if user == None:
+    
+    return user
+    
+@router.patch("/release_lock/{user_id}", status_code=status.HTTP_200_OK, response_model=UserReadDTO)
+async def release_lock(
+    user_id: UUID,
+    service: UserService = Depends(get_user_service)
+) -> UserReadDTO:
+    
+    """ patch method that resets locktime status
+        and returns UserReadDTO object
+    """
+    try:
+        user = await service.release_lock(user_id)
+
+    except TypeError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id: {user_id} does not exist :("
         )
-    return user
     
+    return user

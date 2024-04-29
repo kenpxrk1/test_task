@@ -32,14 +32,21 @@ class UserService:
         return users
     
 
-    async def acquire_lock(self, id: UUID) -> UserReadDTO | None:
+    async def acquire_lock(self, id: UUID) -> UserReadDTO:
         """ 
-        calling a self repository acquire method and returns 
-        UserReadDTO object or None.
+        calling a self repository set_locktime method and returns 
+        UserReadDTO object.
         """
         user = await self.repository.set_locktime(id)
-        if user == None:
-            return None
         return user
+    
+    async def release_lock(self, id: UUID) -> UserReadDTO:
+        """ 
+        calling a self repository release_lock method and returns 
+        UserReadDTO object.
+        """
+        user = await self.repository.reset_locktime(id)
+        return user
+
     
 

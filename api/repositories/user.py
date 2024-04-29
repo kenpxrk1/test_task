@@ -52,7 +52,7 @@ class UserRepository(AbstractRepository):
             ]
 
     @classmethod
-    async def set_locktime(cls, id: UUID) -> UserReadDTO | None:
+    async def set_locktime(cls, id: UUID) -> UserReadDTO:
         """
         set_locktime takes id param and setting locktime 
         for user by his id. Returns UserReadDTO object 
@@ -61,7 +61,7 @@ class UserRepository(AbstractRepository):
         async with async_session() as session:
             user = await session.get(UserModel, id)
             if user == None:
-                return None
+                raise TypeError
             if user.locktime != None:
                 raise UserAlreadyLockedError
             user.locktime = datetime.datetime.now()
@@ -71,6 +71,15 @@ class UserRepository(AbstractRepository):
 
 
     @classmethod
-    async def release_lock(cls):
+    async def reset_locktime(cls, id: UUID) -> UserReadDTO:
+        """ 
+        reset_locktime takes id param and 
+        resetting locktime for user. Returns UserReadDTO object.
+        """
         async with async_session() as session:
-            ...
+            user = await session.get(UserModel, id)
+            if user == None:
+                raise TypeError
+            user.locktime = None
+            await session.commit()
+            return UserReadDTO.model_validate(user, from_attributes=True)
