@@ -5,6 +5,9 @@ from api.services.user import UserService
 from .depends import get_user_service
 from .schemas import UserReadDTO, UserСreateDTO
 from sqlalchemy.exc import IntegrityError
+from api.exc import UserAlreadyLockedError
+
+
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -46,8 +49,15 @@ async def acquire_lock(
     """ patch method that updates locktime status
         and returns UserReadDTO object or None 
     """
-
-    user = await service.acquire_lock(user_id)
+    try:
+        user = await service.acquire_lock(user_id)
+        
+    except UserAlreadyLockedError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"User with id: {user_id} already locked :("
+        )
+        
     if user == None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

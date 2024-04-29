@@ -7,7 +7,7 @@ from api.models import UserModel
 from api.db import async_session
 from .repository import AbstractRepository
 from api.schemas import UserСreateDTO, UserReadDTO
-
+from api.exc import UserAlreadyLockedError
 
 
 class UserRepository(AbstractRepository):
@@ -62,6 +62,8 @@ class UserRepository(AbstractRepository):
             user = await session.get(UserModel, id)
             if user == None:
                 return None
+            if user.locktime != None:
+                raise UserAlreadyLockedError
             user.locktime = datetime.datetime.now()
             await session.commit()
             return UserReadDTO.model_validate(user, from_attributes=True)
@@ -70,4 +72,5 @@ class UserRepository(AbstractRepository):
 
     @classmethod
     async def release_lock(cls):
-        return 1
+        async with async_session() as session:
+            ...
