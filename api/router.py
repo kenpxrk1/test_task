@@ -1,12 +1,13 @@
 from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
+from api.db import get_async_session
 from api.services.user import UserService
 from .depends import get_user_service
 from .schemas import UserReadDTO, UserСreateDTO
 from sqlalchemy.exc import IntegrityError
 from api.exc import UserAlreadyLockedError
-
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -14,14 +15,17 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_user(
-    request: UserСreateDTO, service: UserService = Depends(get_user_service)
+    request: UserСreateDTO, 
+    service: UserService = Depends(get_user_service),
+    session: AsyncSession = Depends(get_async_session)
+    
 ) -> None:
     """ 
     creates a new user and returns success message if it 
     done correctly 
     """
     try:
-        await service.create_user(request)
+        await service.create_user(request, session)
         return "user created successfully"
     except IntegrityError:
         raise HTTPException(
@@ -31,26 +35,28 @@ async def create_user(
     
 @router.get("", status_code=status.HTTP_200_OK, response_model=List[UserReadDTO | None])
 async def get_users(
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
+    session: AsyncSession = Depends(get_async_session)
 ) -> List[UserReadDTO | None]:
     
     """ get method that returns a list of all users or empty list if they dont exist """
 
-    users = await service.get_users()
+    users = await service.get_users(session)
     return users
 
 
 @router.patch("/acquire_lock/{user_id}", status_code=status.HTTP_200_OK, response_model=UserReadDTO)
 async def acquire_lock(
     user_id: UUID,
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
+    session: AsyncSession = Depends(get_async_session)
 ) -> UserReadDTO:
     
     """ patch method that updates locktime status
         and returns UserReadDTO object
     """
     try:
-        user = await service.acquire_lock(user_id)
+        user = await service.acquire_lock(user_id, session)
 
     except TypeError:
         raise HTTPException(
@@ -69,14 +75,15 @@ async def acquire_lock(
 @router.patch("/release_lock/{user_id}", status_code=status.HTTP_200_OK, response_model=UserReadDTO)
 async def release_lock(
     user_id: UUID,
-    service: UserService = Depends(get_user_service)
+    service: UserService = Depends(get_user_service),
+    session: AsyncSession = Depends(get_async_session)
 ) -> UserReadDTO:
     
     """ patch method that resets locktime status
         and returns UserReadDTO object
     """
     try:
-        user = await service.release_lock(user_id)
+        user = await service.release_lock(user_id, session)
 
     except TypeError:
         raise HTTPException(

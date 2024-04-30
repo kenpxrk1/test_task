@@ -1,6 +1,6 @@
 import enum 
 
-class Domain(enum.Enum):
+class UserDomain(enum.Enum):
     canary = "canary"
     regular = "regular"
 

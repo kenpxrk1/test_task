@@ -2,7 +2,7 @@ import datetime
 from uuid import UUID, uuid4
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 from sqlalchemy import func, text
-from .enums import Domain
+from .enums import UserDomain
 from .config import settings
 
 class Base(DeclarativeBase):
@@ -17,5 +17,5 @@ class UserModel(Base):
     password: Mapped[str]
     project_id: Mapped[UUID]
     env: Mapped[str] = mapped_column(server_default=settings.ENV_MODE)
-    domain: Mapped[Domain]
+    domain: Mapped[UserDomain]
     locktime: Mapped[datetime.datetime] = mapped_column(nullable=True)
