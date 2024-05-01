@@ -20,8 +20,7 @@ async def create_user(
     session: AsyncSession = Depends(get_async_session),
 ) -> UserReadDTO:
     """
-    creates a new user and returns success message if it
-    done correctly
+    creates a new user and returns UserReadDTO
     """
     try:
         user = await service.create_user(request, session)
@@ -38,7 +37,7 @@ async def get_users(
     service: UserService = Depends(get_user_service),
     session: AsyncSession = Depends(get_async_session),
 ) -> List[UserReadDTO | None]:
-    """get method that returns a list of all users or empty list if they dont exist"""
+    """get method that returns a list of all users"""
 
     users = await service.get_users(session)
     return users
@@ -54,7 +53,7 @@ async def acquire_lock(
     service: UserService = Depends(get_user_service),
     session: AsyncSession = Depends(get_async_session),
 ) -> UserReadDTO:
-    """patch method that updates locktime status
+    """patch method that updates locktime status by uuid
     and returns UserReadDTO object
     """
     try:
@@ -85,7 +84,7 @@ async def release_lock(
     service: UserService = Depends(get_user_service),
     session: AsyncSession = Depends(get_async_session),
 ) -> UserReadDTO:
-    """patch method that resets locktime status
+    """patch method that resets locktime status by uuid
     and returns UserReadDTO object
     """
     try:

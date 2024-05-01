@@ -1,12 +1,10 @@
 import datetime
 from typing import List
 from uuid import UUID
-from fastapi import Depends
-from sqlalchemy import insert, select, text, update
+from sqlalchemy import insert, select
 from api.models import UserModel
-from api.db import async_session
 from .repository import AbstractRepository
-from api.schemas import UserСreateDTO, UserReadDTO
+from api.schemas import UserReadDTO
 from api.exc import UserAlreadyLockedError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,7 +20,7 @@ class UserRepository(AbstractRepository):
         """
         create_user realize classmethod that adding new user
         into a database, takings dictionary parameter with user
-        data and returns nothing.
+        data and returns UserReadDTO.
         """
         created_user = insert(UserModel).values(**data).returning(UserModel)
         user = await session.execute(created_user)
@@ -51,8 +49,7 @@ class UserRepository(AbstractRepository):
     async def set_locktime(cls, id: UUID, session: AsyncSession) -> UserReadDTO:
         """
         set_locktime takes id param and setting locktime
-        for user by his id. Returns UserReadDTO object
-        or None if user does not exist.
+        for user by his id. Returns UserReadDTO object.
         """
         user = await session.get(UserModel, id)
         if user == None:

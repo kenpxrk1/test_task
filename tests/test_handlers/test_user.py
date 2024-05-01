@@ -1,5 +1,4 @@
 import json
-from uuid import UUID, uuid4
 from httpx import AsyncClient
 import pytest
 

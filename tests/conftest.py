@@ -1,6 +1,6 @@
 import datetime
 from typing import AsyncGenerator
-from uuid import UUID, uuid4
+from uuid import UUID
 import asyncpg
 from pydantic import EmailStr
 from api.db import get_async_session
