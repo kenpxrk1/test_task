@@ -14,9 +14,10 @@ async_session = async_sessionmaker(async_engine, expire_on_commit=False)
 
 async def get_async_session() -> AsyncGenerator:
     async with async_session() as session:
-       yield session
+        yield session
+
 
 async def create_tables():
     async with async_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)

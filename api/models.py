@@ -5,14 +5,18 @@ from sqlalchemy import func, text
 from .enums import UserDomain
 from .config import settings
 
+
 class Base(DeclarativeBase):
-    pass 
+    pass
+
 
 class UserModel(Base):
     __tablename__ = "users"
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
-    created_at: Mapped[datetime.datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=text("TIMEZONE('utc', now())")
+    )
     login: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
     project_id: Mapped[UUID]

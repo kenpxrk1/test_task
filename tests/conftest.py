@@ -21,6 +21,7 @@ async_session_maker = async_sessionmaker(
     expire_on_commit=False,
 )
 
+
 @pytest.fixture(scope="session")
 def event_loop():
     loop = asyncio.get_event_loop_policy().new_event_loop()
@@ -28,7 +29,7 @@ def event_loop():
     loop.close()
 
 
-@pytest_asyncio.fixture(scope='session', autouse=True)
+@pytest_asyncio.fixture(scope="session", autouse=True)
 async def db_init(event_loop):
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
@@ -56,9 +57,8 @@ async def asyncpg_pool():
 async def get_users(asyncpg_pool):
     async def get_users_from_db():
         async with asyncpg_pool.acquire() as connection:
-            return await connection.fetch(
-                """SELECT * FROM users"""
-            )
+            return await connection.fetch("""SELECT * FROM users""")
+
     return get_users_from_db
 
 
@@ -83,7 +83,7 @@ async def create_user_in_database(asyncpg_pool):
         project_id: UUID,
         env: str,
         domain: UserDomain,
-        locktime: datetime.datetime | None
+        locktime: datetime.datetime | None,
     ):
         async with asyncpg_pool.acquire() as connection:
             return await connection.execute(
@@ -97,6 +97,7 @@ async def create_user_in_database(asyncpg_pool):
                 domain,
                 locktime,
             )
+
     return create_user_in_database
 
 
