@@ -13,20 +13,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=UserReadDTO)
 async def create_user(
     request: UserСreateDTO, 
     service: UserService = Depends(get_user_service),
     session: AsyncSession = Depends(get_async_session)
     
-) -> None:
+) -> UserReadDTO:
     """ 
     creates a new user and returns success message if it 
     done correctly 
     """
     try:
-        await service.create_user(request, session)
-        return "user created successfully"
+        user = await service.create_user(request, session)
+        return user
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

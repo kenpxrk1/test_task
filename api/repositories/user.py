@@ -18,18 +18,20 @@ class UserRepository(AbstractRepository):
     """
 
     @classmethod
-    async def create_user(cls, data: dict, session: AsyncSession) -> None:
+    async def create_user(cls, data: dict, session: AsyncSession) -> UserReadDTO:
         """
         create_user realize classmethod that adding new user
         into a database, takings dictionary parameter with user
         data and returns nothing.
         """
         created_user = (
-            insert(UserModel).values(**data)
+            insert(UserModel).values(**data).returning(UserModel)
         )
-        await session.execute(created_user)
+        user = await session.execute(created_user)
         await session.commit()
-
+        user = user.scalar_one()
+        return UserReadDTO.model_validate(user, from_attributes=True)
+        
 
     @classmethod
     async def get_users(cls, session: AsyncSession) -> List[UserReadDTO | None]:
