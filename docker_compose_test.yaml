@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+
+  db:
+
+    image: postgres:15
+
+    container_name: 'vk_test_db'
+
+    env_file:
+      - .env 
+
+    environment:
+        POSTGRES_DB: ${TEST_POSTGRES_DB}
+        POSTGRES_USER: ${TEST_POSTGRES_USER}
+        POSTGRES_PASSWORD: ${TEST_POSTGRES_PASSWORD} 
+        
+    volumes:
+      - .postgres:/var/lib/postgres/data
+
+    restart: always
+
+
+
+  app:
+    container_name: 'vk_api'
+
+    build:
+      context: .
+
+    depends_on:
+      - db
+
+    env_file:
+      - .env
+
+    command: bash -c "pytest -v tests/"
+
+    ports:
+      - 9999:8000
