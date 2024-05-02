@@ -1,12 +1,12 @@
 import enum
 
 
-class UserDomain(enum.Enum):
+class UserDomainEnum(enum.Enum):
     canary = "canary"
     regular = "regular"
 
 
-class EnvMode(enum.Enum):
+class EnvModeEnum(enum.Enum):
     stage = "stage"
     preprod = "preprod"
     prod = "prod"

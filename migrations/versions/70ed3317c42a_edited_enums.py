@@ -1,8 +1,8 @@
-"""init
+"""edited enums
 
-Revision ID: 610991f9eb03
+Revision ID: 70ed3317c42a
 Revises: 
-Create Date: 2024-05-02 10:16:16.246085
+Create Date: 2024-05-02 17:26:01.438666
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '610991f9eb03'
+revision: str = '70ed3317c42a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,8 +26,8 @@ def upgrade() -> None:
     sa.Column('login', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('project_id', sa.Uuid(), nullable=False),
-    sa.Column('env', sa.Enum('stage', 'preprod', 'prod', name='env_mode'), server_default='stage', nullable=False),
-    sa.Column('domain', sa.Enum('canary', 'regular', name='user_domain'), nullable=False),
+    sa.Column('env', sa.Enum('stage', 'preprod', 'prod', name='envmodeenum'), server_default='stage', nullable=False),
+    sa.Column('domain', sa.Enum('canary', 'regular', name='userdomainenum'), nullable=False),
     sa.Column('locktime', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('login')

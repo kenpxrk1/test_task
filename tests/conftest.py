@@ -4,7 +4,7 @@ from uuid import UUID
 import asyncpg
 from pydantic import EmailStr
 from api.db import get_async_session
-from api.enums import UserDomain
+from api.enums import UserDomainEnum
 from api.main import app
 from httpx import AsyncClient
 import pytest_asyncio
@@ -82,7 +82,7 @@ async def create_user_in_database(asyncpg_pool):
         password: str,
         project_id: UUID,
         env: str,
-        domain: UserDomain,
+        domain: UserDomainEnum,
         locktime: datetime.datetime | None,
     ):
         async with asyncpg_pool.acquire() as connection:

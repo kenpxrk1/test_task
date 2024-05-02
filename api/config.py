@@ -22,6 +22,14 @@ class Settings(BaseSettings):
     TEST_DB_PASS: str
     TEST_DB_NAME: str
 
+    POSTGRES_DB:str
+    POSTGRES_USER:str
+    POSTGRES_PASSWORD:str
+
+    TEST_POSTGRES_DB:str
+    TEST_POSTGRES_USER:str
+    TEST_POSTGRES_PASSWORD:str
+
     @property
     def TEST_DATABASE_URL(self) -> str:
         """
