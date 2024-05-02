@@ -1,7 +1,7 @@
 import datetime
 from uuid import UUID
 from pydantic import BaseModel, EmailStr
-from .enums import UserDomain
+from .enums import UserDomain, EnvMode
 
 
 class UserBaseDTO(BaseModel):
@@ -18,7 +18,7 @@ class UserReadDTO(UserBaseDTO):
     id: UUID
     created_at: datetime.datetime
     project_id: UUID
-    env: str
+    env: EnvMode
     domain: UserDomain
     locktime: datetime.datetime | None
 
