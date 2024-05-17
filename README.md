@@ -2,7 +2,7 @@
 
 ### Требования: 
 
-Написать Restful-сервис на Python с использованием FastAPI в качестве веб-фреймворка, SQLAlcheymy в качестве ORM,
+Написать Restful-сервис на Python с использованием FastAPI в качестве веб-фреймворка, SQLAlchemy в качестве ORM,
 который бы создавал нового пользователя в ботоферме, выдавал список всех существующих пользователей, а также блокировал
 пользователя для его использования в рамках E2E-теста.
 
@@ -34,6 +34,8 @@ $ git clone https://github.com/kenpxrk1/quiz-task-api
 ```sh
 $ docker-compose docker_compose_app up 
 ```
+
+Для прогона тестов:
 
 ```sh
 $ docker-compose docker_compose_tests up 
